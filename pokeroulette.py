@@ -1,12 +1,9 @@
-import numpy as np
-from numpy import random
+import random
 
-board = np.empty((3,4))
 board = [["1A","1B","1C","1D"],
           ["2A","2B","2C","2D"],
           ["3A","3B","3C","3D"]]
           
-matrix = np.empty((3,4))
 matrix = [[" "," "," "," "],
           [" "," "," "," "],
           [" "," "," "," "]]
@@ -80,7 +77,7 @@ def printGame():
 def spin():
     
     #recibir la casilla ocupada en formato de posición en lista
-    rand=random.randint(11)
+    rand=random.randint(0,11)
 
     #print('Random position:  ', rand)
     print('* * * * * * * *')
