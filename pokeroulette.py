@@ -13,22 +13,25 @@ positions = ['00','11','22','03','10','21','02','13','20','01','12','23']
 occupied =  ['-','-','-','-','-','-','-','-','-','-','-','-']
 
 score=100
+question = "Spin? [Y/N]:"
 
 def main():
-    printGame()   
-    spin()
+    printGame()
     while True:
-        print("Keep playing? [Y/N]:", end=' ')
-        kp = input().lower()
+        print(question, end=' ')
+        play = input().lower()
         print('')
         
-        if(kp == 'y'): spin()
+        if(play == 'y'):
+            betting()
         else:
-            if(kp == 'n'): break
+            if(play == 'n'): 
+                break
             else:
-                print('Not a valid input. Try Again.') 
+                print('Not a valid input. Please try Again. \n')
                 continue
-    print('Thank you for playing! \nYour final score is:', score)
+    print('Thank you for playing! \n\nYour final score is:', score, end='!')
+    input()
 
 
 def initialPrint():
@@ -74,29 +77,95 @@ def printGame():
     
     print('Your score:', score, '\n')
 
-def spin():
+def betting():
+    print('Please write your bet:', end=' ')
+    bet = input().lower()
     
-    #recibir la casilla ocupada en formato de posición en lista
-    rand=random.randint(0,11)
+    spin()
+    
+def spin():
+    #recibir la casilla ocupada en formato de índice 
+    rand=getRandom(0, len(roulette)-1)
 
-    #print('Random position:  ', rand)
-    print('* * * * * * * *')
-    print('*  SLOT:', roulette[rand], '  *')
-    print('* * * * * * * *')
+    fill(rand)
+    
+    printGame()
 
+def fill(rand):
+    
+    free_position = search_free_position(rand)
+    pos=getPositions(free_position)
+    
+    slot=getSlot(free_position)
 
-    #pasar el valor de posición en lista a posición en matriz
-    board_position= [int(char) for char in positions[rand]]
+    print_slot(slot)
+
+     #pasar el valor de posición en lista a posición en matriz
+    board_position= [int(char) for char in pos]
     i=board_position[0]
     j=board_position[1]
     
     #print('Position in board:', board_position)
-    print('')
+    #print('')
     
     #tachar el valor en la matriz y en la ruleta
     matrix[i][j]='*'
-    occupied[rand]='*'
+    occupied[free_position]='*'
     
-    printGame()
+def print_slot(s):
+    #print('Random position:  ', rand)
+    print("\nSpinning...\n")
+    print('* * * * * * * *')
+    print('*  SLOT:', s, '  *')
+    print('* * * * * * * *')
     
+def search_free_position(rand):
+    if (is_it_busy(rand)):
+        return bounce(rand)
+    else:
+        return rand
+    
+def is_it_busy(rand):
+    if (occupied[rand] == '*'):
+        return True
+
+def bounce(rand):
+    if (getRandom(0,1) == 0): #rebota a la izq
+        return bounce_left(rand)
+    else:
+        return bounce_right(rand) #rebota a la derecha
+    
+def bounce_left(rand):
+    print("Oops! Busy slot, bouncing left!")
+    if (rand == 0):
+        r = len(roulette)-1
+    else:
+        r = rand-1
+        
+    if (is_it_busy(r)):
+        bounce_left(r)
+    else:
+        return r
+        
+def bounce_right(rand):
+    print("Oops! Busy slot, bouncing right!")
+    if (rand == len(roulette)-1):
+        r = 0
+    else:
+        r = rand+1
+        
+    if (is_it_busy(r)):
+        bounce_right(r)
+    else:
+        return r
+
+def getRandom(x,y):
+    return random.randint(x,y)
+
+def getSlot(rand):
+    return roulette[rand]
+
+def getPositions(rand):
+    return positions[rand]
+
 main()
